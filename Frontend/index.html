@@ -1,0 +1,73 @@
+   
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1 style="color:#fff;text-transform:uppercase;background: green;padding:20px">students Relationship Management</h1>
+    <div class="tableSection">
+        <button style="margin-bottom:10px" onclick="addstudents()">Add students</button>
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Action</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        function loadDoc() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var responseJson = JSON.parse(this.responseText);
+                    console.log(responseJson.length, responseJson[0].name, responseJson);
+                    for (i = 0; i < responseJson.length; i++) {
+                        $('table').append('<tr><td>' + responseJson[i].name + '</td><td>' + responseJson[i].department + '</td><td>' + responseJson[i].country + '</td><td><a onclick="updateBtn(' + responseJson[i].id + ')">Update</a> | <a onclick="deleteBtn(' + responseJson[i].id + ')">Delete</a></td><tr>');
+                    }
+                }
+            };
+            xhttp.open("GET", "http://localhost:8080/users");
+            xhttp.send();
+        }
+        loadDoc();
+
+        function addstudents() {
+            window.location.href = "addstudents.html";
+        }
+
+        function deleteBtn(event) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    $('table').html('<tr><th>Name</th><th>Department</th><th>Country</th><th>Action</th></tr>')
+                    loadDoc();
+                }
+            };
+            xhttp.open("DELETE", "http://localhost:8080/delete/" + event);
+            xhttp.send();
+        }
+
+        function updateBtn(event) {
+            window.location.href="updatestudents.html?updateid=" + event;
+        }
+    </script>
+</body>
+
+</html>
